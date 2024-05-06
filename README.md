@@ -20,11 +20,11 @@
    ```
    python main.py
    ```
-2. **Отредактируйте файл `settings.ini` по пути `C:\RPC` согласно вашему ID:**
+2. **Отредактируйте файл `settings.ini` по пути `C:\RPC` согласно вашему [ID](https://youtu.be/4qT4BbN-yNU):**
 
    ```settigs.ini
    [Settings]
-   user_id = 96
+   user_id = *ur id*
    ```
 3. **Запустите Garry's mod, чтобы увидеть статус в Discord.**
 
