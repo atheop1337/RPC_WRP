@@ -11,22 +11,16 @@
    cd Desktop
    git clone https://github.com/v1lmok/RPC_WRP.git
    ```
-2. **Установите зависимости:**
+2. **Установите зависимости и укажите свой forumID / Gmod_path:**
    ```
    python setup.py
    ```
 ## Использование
-1. **Запустите скрипт:**
+1. **Запустите Main.py, чтобы открыть игру и установить статус в discord.**
    ```
    python main.py
    ```
-2. **Отредактируйте файл `settings.ini` по пути `C:\RPC` согласно вашему [ID](https://youtu.be/4qT4BbN-yNU):**
 
-   ```settigs.ini
-   [Settings]
-   user_id = *ur id*
-   ```
-3. **Запустите Garry's mod, чтобы увидеть статус в Discord.**
 
 ## Пример
 
