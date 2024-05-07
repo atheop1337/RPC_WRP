@@ -1,2 +1,2 @@
 import subprocess
-subprocess.run(["pip", "install", "discordrpc", "aiohttp"])
+subprocess.run(["pip", "install", "discord-rpc", "aiohttp"])
