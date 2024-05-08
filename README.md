@@ -11,7 +11,7 @@
    cd Desktop
    git clone https://github.com/v1lmok/RPC_WRP.git
    ```
-2. **Установите зависимости и укажите свой forumID / Gmod_path:**
+2. **Установите зависимости и укажите свой forumID**
    ```
    python setup.py
    ```
