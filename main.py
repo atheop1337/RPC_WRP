@@ -4,9 +4,9 @@ import aiohttp, asyncio
 import configparser
 import subprocess
 from winreg import OpenKeyEx, HKEY_LOCAL_MACHINE, QueryValueEx
-import pymem
+import pymem, psutil
 import re
-
+import webbrowser
 
 # Cleverly done, Mr. Freeman, but you're not supposed to be here.
 class Information:
@@ -28,8 +28,20 @@ class Information:
         return user_id
     def get_path(self):
         return QueryValueEx(OpenKeyEx(HKEY_LOCAL_MACHINE,r"SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\Steam App 4000"),'InstallLocation')[0]+'\\hl2.exe'
+class Mr_Freeman:
+    def Mr_Freeman(self):
+        url = 'https://youtu.be/1snyDYHnkL8'
+        webbrowser.open(url)
 
-
+    def terminate_process(self):
+        pid = ServerStatus().is_runnig()
+        try:
+            process = psutil.Process(pid)
+            process.kill()
+            return True
+        except psutil.NoSuchProcess:
+            print(f"Process with PID {pid} not found.")
+            return False
 class ServerStatus:
     def __init__(self):
         self.OFS1 = 0x5B47CC
@@ -43,7 +55,6 @@ class ServerStatus:
             except:
                 continue
         return False
-
     def getStatus(self):
         pid=self.is_runnig()
         if not pid:return
@@ -54,7 +65,10 @@ class ServerStatus:
         ip=re.search(r'\d+\.+\d+\.+\d+\.+\d+\d',str(gmod.read_bytes(client.lpBaseOfDll + self.OFS1, 14)))
         if not ip:return
         server_name = self.server_list.get(ip[0])
-        if not server_name:return
+        if not server_name:
+            Mr_Freeman().Mr_Freeman()
+            Mr_Freeman().terminate_process()
+            quit()
         cd = str(gmod.read_bytes(client.lpBaseOfDll + self.OFS2, 100))
         if 'disconnect' in cd:return
         if "connect" in cd:
@@ -64,6 +78,7 @@ class ServerStatus:
         return f"{status}: {server_name}\n{ip[0]}"
 
 
+
 async def rpc_connect():
     rpc = pypresence.AioPresence(1237037992368148490)
     await rpc.connect()
@@ -71,7 +86,7 @@ async def rpc_connect():
     ss = ServerStatus()
     time_start = int(time.time())
     avatar, name, realname = await info.get_data()
-    button = [{"label": "Forum", "url": r"https://forum.wayzer.ru/"},{"label": "Me on forum", "url": f"https://forum.wayzer.ru/u/{realname}"}]
+    button = [{"label": "Github", "url": r"https://github.com/v1lmok/RPC_WRP"},{"label": "Forum", "url": f"https://forum.wayzer.ru/u/{realname}"}]
     while True:
         status = ss.getStatus()
         await rpc.update(state=f'My nickname on forum is {name}',
