@@ -57,11 +57,11 @@ class ServerStatus:
                 continue
         return False
 
-    async def get_online(self, ip):
-        c = await a2s.ainfo((ip, 27015))
+    def get_online(self, ip):
+        c = a2s.info((ip, 27015))
         return c.player_count
 
-    async def getStatus(self):
+    def getStatus(self):
         pid=self.is_runnig()
         if not pid:return
         gmod=pymem.Pymem()
@@ -82,7 +82,7 @@ class ServerStatus:
             status='Заходит на'
         else:
             status='Играет на'
-        return (f"{status} {server_name[0]}", self.server_list.get(ip[0])[1], await self.get_online(ip[0]))
+        return (f"{status} {server_name[0]}", self.server_list.get(ip[0])[1], self.get_online(ip[0]))
 
 
 
@@ -96,7 +96,7 @@ async def rpc_connect():
     avatar, name, realname = await info.get_data()
     button = [{"label": "Github", "url": r"https://github.com/v1lmok/RPC_WRP"},{"label": "Forum", "url": f"https://forum.wayzer.ru/u/{realname}"}]
     while True:
-        status = await ss.getStatus()
+        status = ss.getStatus()
         if not status:
             img='wrp'
             lt='WayZer RolePlay'
