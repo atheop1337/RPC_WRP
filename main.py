@@ -1,16 +1,16 @@
 import time
 import pypresence
 import aiohttp, asyncio
-import configparser
-import subprocess
-from winreg import OpenKeyEx, HKEY_LOCAL_MACHINE, QueryValueEx
-import pymem, psutil
+import json, os
+import pymem, psutil, subprocess
 import re
 import webbrowser
 import a2s
+from winreg import OpenKeyEx, HKEY_LOCAL_MACHINE, QueryValueEx
 
 # Cleverly done, Mr. Freeman, but you're not supposed to be here.
 class Information:
+
     async def get_data(self):
         user_id = self.read_id()
         async with aiohttp.ClientSession() as session:
@@ -22,14 +22,20 @@ class Information:
                 return avatar, name, realname
 
     def read_id(self):
-        config_path = 'C:/RPC/settings.ini'
-        config = configparser.ConfigParser()
-        config.read(config_path)
-        user_id = config.get('ForumID', 'id')
+        config_path = 'C:/RPC/settings.json'
+        if not os.path.exists(config_path):
+            print("Config file not found.")
+            return
+        with open(config_path, 'r') as configfile:
+            data = json.load(configfile)
+            user_id = data.get('ForumID')
         return user_id
+
     def get_path(self):
         return QueryValueEx(OpenKeyEx(HKEY_LOCAL_MACHINE,r"SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\Steam App 4000"),'InstallLocation')[0]+'\\hl2.exe'
+
 class Mr_Freeman:
+
     def Mr_Freeman(self):
         url = 'https://youtu.be/1snyDYHnkL8'
         webbrowser.open(url)
@@ -43,7 +49,9 @@ class Mr_Freeman:
         except psutil.NoSuchProcess:
             print(f"Process with PID {pid} not found.")
             return False
+
 class ServerStatus:
+
     def __init__(self):
         self.OFS1 = 0x5B47CC
         self.OFS2 = 0x7DC1C0
@@ -83,8 +91,6 @@ class ServerStatus:
         else:
             status='Играет на'
         return (f"{status} {server_name[0]}", self.server_list.get(ip[0])[1], self.get_online(ip[0]))
-
-
 
 
 async def rpc_connect():
