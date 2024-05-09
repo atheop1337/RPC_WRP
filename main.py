@@ -7,6 +7,7 @@ from winreg import OpenKeyEx, HKEY_LOCAL_MACHINE, QueryValueEx
 import pymem, psutil
 import re
 import webbrowser
+import a2s
 
 # Cleverly done, Mr. Freeman, but you're not supposed to be here.
 class Information:
@@ -55,16 +56,21 @@ class ServerStatus:
             except:
                 continue
         return False
-    def getStatus(self):
+
+    async def get_online(self, ip):
+        c = await a2s.ainfo((ip, 27015))
+        return c.player_count
+
+    async def getStatus(self):
         pid=self.is_runnig()
         if not pid:return
         gmod=pymem.Pymem()
         gmod.open_process_from_id(pid)
         client = pymem.pymem.process.module_from_name(gmod.process_handle, "engine.dll")
         if not client:return
-        ip=re.search(r'\d+\.+\d+\.+\d+\.+\d+\d',str(gmod.read_bytes(client.lpBaseOfDll + self.OFS1, 14)))
+        ip=re.search(r'\d+\.+\d+\.+\d+\.+\d+\d',str(gmod.read_bytes(client.lpBaseOfDll + self.OFS1, 14)))[0]
         if not ip:return
-        server_name = self.server_list.get(ip[0])[0]
+        server_name = self.server_list.get(ip)
         if not server_name:
             gordon=Mr_Freeman()
             gordon.Mr_Freeman()
@@ -76,7 +82,8 @@ class ServerStatus:
             status='Заходит на'
         else:
             status='Играет на'
-        return (f"{status} {server_name}", self.server_list.get(ip[0])[1])
+        return (f"{status} {server_name[0]}", self.server_list.get(ip)[1], await self.get_online(ip))
+
 
 
 
@@ -89,17 +96,19 @@ async def rpc_connect():
     avatar, name, realname = await info.get_data()
     button = [{"label": "Github", "url": r"https://github.com/v1lmok/RPC_WRP"},{"label": "Forum", "url": f"https://forum.wayzer.ru/u/{realname}"}]
     while True:
-        status = ss.getStatus()
+        status = await ss.getStatus()
         if not status:
             img='wrp'
+            lt='WayZer RolePlay'
         else:
-            img=status[1]
+            img = status[1]
+            lt = f"{status[2]}/128"
             status=status[0]
-        await rpc.update(state=f'My nickname on forum is {name}',
+        await rpc.update(state=f'Мой ник на форуме {name}',
             details=status,
             buttons=button,
             large_image=img,
-            large_text='WayZer RolePlay',
+            large_text=lt,
             small_image=avatar,
             small_text=name,
             start=time_start)
