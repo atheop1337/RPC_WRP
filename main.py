@@ -68,9 +68,9 @@ class ServerStatus:
         gmod.open_process_from_id(pid)
         client = pymem.pymem.process.module_from_name(gmod.process_handle, "engine.dll")
         if not client:return
-        ip=re.search(r'\d+\.+\d+\.+\d+\.+\d+\d',str(gmod.read_bytes(client.lpBaseOfDll + self.OFS1, 14)))[0]
+        ip=re.search(r'\d+\.+\d+\.+\d+\.+\d+\d',str(gmod.read_bytes(client.lpBaseOfDll + self.OFS1, 14)))
         if not ip:return
-        server_name = self.server_list.get(ip)
+        server_name = self.server_list.get(ip[0])
         if not server_name:
             gordon=Mr_Freeman()
             gordon.Mr_Freeman()
@@ -82,7 +82,7 @@ class ServerStatus:
             status='Заходит на'
         else:
             status='Играет на'
-        return (f"{status} {server_name[0]}", self.server_list.get(ip)[1], await self.get_online(ip))
+        return (f"{status} {server_name[0]}", self.server_list.get(ip[0])[1], await self.get_online(ip[0]))
 
 
 
