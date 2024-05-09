@@ -46,7 +46,7 @@ class ServerStatus:
     def __init__(self):
         self.OFS1 = 0x5B47CC
         self.OFS2 = 0x7DC1C0
-        self.server_list = {"46.174.54.203": "Riverton", "46.174.54.52": "Minton", "37.230.228.180": "Carlin","62.122.213.48": "Brooks", "37.230.162.208": "Rockford"}
+        self.server_list = {"46.174.54.203": ["Riverton","riverton"], "46.174.54.52": ["Minton","minton"], "37.230.228.180": ["Carlin","carlin"], "62.122.213.48": ["Brooks","brooks"], "37.230.162.208": ["Rockford","rockford"]}
 
     def is_runnig(self):
         for i in ('gmod.exe', 'hl2.exe'):
@@ -64,10 +64,11 @@ class ServerStatus:
         if not client:return
         ip=re.search(r'\d+\.+\d+\.+\d+\.+\d+\d',str(gmod.read_bytes(client.lpBaseOfDll + self.OFS1, 14)))
         if not ip:return
-        server_name = self.server_list.get(ip[0])
+        server_name = self.server_list.get(ip[0])[0]
         if not server_name:
-            Mr_Freeman().Mr_Freeman()
-            Mr_Freeman().terminate_process()
+            gordon=Mr_Freeman()
+            gordon.Mr_Freeman()
+            gordon.terminate_process()
             quit()
         cd = str(gmod.read_bytes(client.lpBaseOfDll + self.OFS2, 100))
         if 'disconnect' in cd:return
@@ -75,7 +76,7 @@ class ServerStatus:
             status='Заходит на'
         else:
             status='Играет на'
-        return f"{status}: {server_name}\n{ip[0]}"
+        return (f"{status} {server_name}", self.server_list.get(ip[0])[1])
 
 
 
@@ -89,10 +90,15 @@ async def rpc_connect():
     button = [{"label": "Github", "url": r"https://github.com/v1lmok/RPC_WRP"},{"label": "Forum", "url": f"https://forum.wayzer.ru/u/{realname}"}]
     while True:
         status = ss.getStatus()
+        if not status:
+            img='wrp'
+        else:
+            img=status[1]
+            status=status[0]
         await rpc.update(state=f'My nickname on forum is {name}',
             details=status,
             buttons=button,
-            large_image='wrp',
+            large_image=img,
             large_text='WayZer RolePlay',
             small_image=avatar,
             small_text=name,
