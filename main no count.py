@@ -7,12 +7,12 @@ import re
 import webbrowser
 from winreg import OpenKeyEx, HKEY_LOCAL_MACHINE, QueryValueEx
 from colorama import Fore, Style
-
 # Cleverly done, Mr. Freeman, but you're not supposed to be here.
 class Information:
 
     def __init__(self):
         self.version = '1.0'
+
     async def get_data(self):
         user_id = self.read_id()
         async with aiohttp.ClientSession() as session:
@@ -39,9 +39,12 @@ class Information:
             data = json.load(configfile)
             user_id = data.get('ForumID')
         return user_id
+
     def get_path(self):
         return QueryValueEx(OpenKeyEx(HKEY_LOCAL_MACHINE,r"SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\Steam App 4000"),'InstallLocation')[0]+'\\hl2.exe'
+
 class Mr_Freeman:
+
     def Mr_Freeman(self):
         url = 'https://youtu.be/1snyDYHnkL8'
         webbrowser.open(url)
@@ -55,7 +58,9 @@ class Mr_Freeman:
         except psutil.NoSuchProcess:
             print(f"Process with PID {pid} not found.")
             return False
+
 class ServerStatus:
+
     def __init__(self):
         self.OFS1 = 0x5B47CC
         self.OFS2 = 0x7DC1C0
@@ -68,6 +73,8 @@ class ServerStatus:
             except:
                 continue
         return False
+
+
     def getStatus(self):
         pid=self.is_runnig()
         if not pid:return
@@ -109,7 +116,6 @@ class ServerStatus:
         return server_name
 
 
-
 async def rpc_connect():
     rpc = pypresence.AioPresence(1237037992368148490)
     await rpc.connect()
@@ -136,7 +142,6 @@ async def rpc_connect():
             start=time_start)
         await asyncio.sleep(15)
 
-
 async def rpc_and_gmod():
     ss = ServerStatus()
     version = Information().get_version()
@@ -152,9 +157,9 @@ async def rpc_and_gmod():
             subprocess.Popen(Information().get_path())
         await rpc_connect()
 
-
 async def main():
     await rpc_and_gmod()
+
 
 if __name__ == "__main__":
     asyncio.run(main())
