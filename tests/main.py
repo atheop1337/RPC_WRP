@@ -90,7 +90,7 @@ class ServerStatus:
             status='Заходит на'
         else:
             status='Играет на'
-        return (f"{status} {server_name[0]}", self.server_list.get(ip[0])[1], self.get_online(ip[0]))
+        return (f"{status} {server_name[0]}", self.server_list.get(ip[0])[1], self.get_online(ip[0]), ip[0])
 
 
 async def rpc_connect():
@@ -100,9 +100,11 @@ async def rpc_connect():
     ss = ServerStatus()
     time_start = int(time.time())
     avatar, name, realname = await info.get_data()
-    ip = ss.getStatus()
+    ip = ss.getStatus()[3]
     print(ip)
-    button = [{"label": "Github", "url": r"https://github.com/v1lmok/RPC_WRP"},{"label": "Connect", "url": f"steam://connect/{ip}"}]
+    button = [{"label": "Github", "url": r"https://github.com/v1lmok/RPC_WRP"},
+            {"label": "Connect", "url": f"steam://connect/{ip}"}
+            ]
     while True:
         status = ss.getStatus()
         if not status:
