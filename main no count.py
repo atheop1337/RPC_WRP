@@ -5,15 +5,14 @@ import json, os
 import pymem, psutil, subprocess
 import re
 import webbrowser
-import a2s
 from winreg import OpenKeyEx, HKEY_LOCAL_MACHINE, QueryValueEx
 from colorama import Fore, Style
+
 # Cleverly done, Mr. Freeman, but you're not supposed to be here.
 class Information:
 
     def __init__(self):
         self.version = '1.0'
-
     async def get_data(self):
         user_id = self.read_id()
         async with aiohttp.ClientSession() as session:
@@ -40,12 +39,9 @@ class Information:
             data = json.load(configfile)
             user_id = data.get('ForumID')
         return user_id
-
     def get_path(self):
         return QueryValueEx(OpenKeyEx(HKEY_LOCAL_MACHINE,r"SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\Steam App 4000"),'InstallLocation')[0]+'\\hl2.exe'
-
 class Mr_Freeman:
-
     def Mr_Freeman(self):
         url = 'https://youtu.be/1snyDYHnkL8'
         webbrowser.open(url)
@@ -59,9 +55,7 @@ class Mr_Freeman:
         except psutil.NoSuchProcess:
             print(f"Process with PID {pid} not found.")
             return False
-
 class ServerStatus:
-
     def __init__(self):
         self.OFS1 = 0x5B47CC
         self.OFS2 = 0x7DC1C0
@@ -74,11 +68,6 @@ class ServerStatus:
             except:
                 continue
         return False
-
-    def get_online(self, ip):
-        c = a2s.info((ip, 27015))
-        return c.player_count
-
     def getStatus(self):
         pid=self.is_runnig()
         if not pid:return
@@ -88,7 +77,7 @@ class ServerStatus:
         if not client:return
         ip=re.search(r'\d+\.+\d+\.+\d+\.+\d+\d',str(gmod.read_bytes(client.lpBaseOfDll + self.OFS1, 14)))
         if not ip:return
-        server_name = self.server_list.get(ip[0])
+        server_name = self.server_list.get(ip[0])[0]
         if not server_name:
             gordon=Mr_Freeman()
             gordon.Mr_Freeman()
@@ -100,7 +89,25 @@ class ServerStatus:
             status='Заходит на'
         else:
             status='Играет на'
-        return (f"{status} {server_name[0]}", self.server_list.get(ip[0])[1], self.get_online(ip[0]))
+        return (f"{status} {server_name}", self.server_list.get(ip[0])[1])
+
+    def getServer(self):
+        pid = self.is_runnig()
+        if not pid: return
+        gmod = pymem.Pymem()
+        gmod.open_process_from_id(pid)
+        client = pymem.pymem.process.module_from_name(gmod.process_handle, "engine.dll")
+        if not client: return
+        ip = re.search(r'\d+\.+\d+\.+\d+\.+\d+\d', str(gmod.read_bytes(client.lpBaseOfDll + self.OFS1, 14)))
+        if not ip: return
+        server_name = self.server_list.get(ip[0])[0]
+        if not server_name:
+            gordon = Mr_Freeman()
+            gordon.Mr_Freeman()
+            gordon.terminate_process()
+            quit()
+        return server_name
+
 
 
 async def rpc_connect():
@@ -113,18 +120,17 @@ async def rpc_connect():
     button = [{"label": "Github", "url": r"https://github.com/v1lmok/RPC_WRP"},{"label": "Forum", "url": f"https://forum.wayzer.ru/u/{realname}"}]
     while True:
         status = ss.getStatus()
+        server_name = ss.getServer()
         if not status:
             img='wrp'
-            lt='WayZer RolePlay'
         else:
-            img = status[1]
-            lt = f"{status[2]}/128"
+            img=status[1]
             status=status[0]
-        await rpc.update(state=f'Мой ник на форуме {name}',
+        await rpc.update(state=f'My nickname on forum is {name}',
             details=status,
             buttons=button,
             large_image=img,
-            large_text=lt,
+            large_text=server_name,
             small_image=avatar,
             small_text=name,
             start=time_start)
