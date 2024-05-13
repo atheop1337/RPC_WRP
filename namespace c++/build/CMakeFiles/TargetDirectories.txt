@@ -1,3 +1,0 @@
-D:/git/RPC_WRP/namespace c++/build/CMakeFiles/namespace_c++.dir
-D:/git/RPC_WRP/namespace c++/build/CMakeFiles/ALL_BUILD.dir
-D:/git/RPC_WRP/namespace c++/build/CMakeFiles/ZERO_CHECK.dir
