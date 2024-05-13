@@ -1,14 +1,16 @@
 import time
 import pypresence
 import aiohttp, asyncio, requests
-import json, os
+import json, os, signal
 import pymem, psutil, subprocess
 import re
 import webbrowser
 import a2s
 from winreg import OpenKeyEx, HKEY_LOCAL_MACHINE, QueryValueEx
 from colorama import Fore, Style
+
 # Cleverly done, Mr. Freeman, but you're not supposed to be here.
+
 class Information:
 
     def __init__(self):
@@ -102,6 +104,12 @@ class ServerStatus:
             status='Играет на'
         return (f"{status} {server_name[0]}", self.server_list.get(ip[0])[1], self.get_online(ip[0]))
 
+def signal_handler(sig, frame):
+    gordon = Mr_Freeman()
+    gordon.terminate_process()
+    print('Aborting...')
+    time.sleep(0.8)
+    exit(0)
 
 async def rpc_connect():
     rpc = pypresence.AioPresence(1237037992368148490)
@@ -132,6 +140,7 @@ async def rpc_connect():
 
 
 async def rpc_and_gmod():
+    signal.signal(signal.SIGINT, signal_handler)
     ss = ServerStatus()
     version = Information().get_version()
     if not version:
@@ -148,6 +157,7 @@ async def rpc_and_gmod():
 
 
 async def main():
+    print('Welcome to RPC! For exit press [CTRL+C] or close manually!')
     await rpc_and_gmod()
 
 if __name__ == "__main__":

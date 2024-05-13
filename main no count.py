@@ -1,13 +1,15 @@
 import time
 import pypresence
 import aiohttp, asyncio, requests
-import json, os
+import json, os, signal
 import pymem, psutil, subprocess
 import re
 import webbrowser
 from winreg import OpenKeyEx, HKEY_LOCAL_MACHINE, QueryValueEx
 from colorama import Fore, Style
+
 # Cleverly done, Mr. Freeman, but you're not supposed to be here.
+
 class Information:
 
     def __init__(self):
@@ -29,6 +31,7 @@ class Information:
         if response.status_code == 200:
             json_data = json.loads(response.text)
             return True if json_data['version'] == self.version else False
+        else: return 404
 
     def read_id(self):
         config_path = 'C:/RPC/settings.json'
@@ -115,6 +118,12 @@ class ServerStatus:
             quit()
         return server_name
 
+def signal_handler(sig, frame):
+    gordon = Mr_Freeman()
+    gordon.terminate_process()
+    print('Aborting...')
+    time.sleep(0.8)
+    exit(0)
 
 async def rpc_connect():
     rpc = pypresence.AioPresence(1237037992368148490)
@@ -143,6 +152,7 @@ async def rpc_connect():
         await asyncio.sleep(15)
 
 async def rpc_and_gmod():
+    signal.signal(signal.SIGINT, signal_handler)
     ss = ServerStatus()
     version = Information().get_version()
     if not version:
@@ -152,14 +162,19 @@ async def rpc_and_gmod():
             if not ss.is_runnig():
                 subprocess.Popen(Information().get_path())
             await rpc_connect()
+    elif version == 404:
+        print('Cannot fetch information about latest version..\nAborting...')
+        time.sleep(0.8)
+        webbrowser.open('https://youtu.be/aR1-kXgDCdA')
+        quit(0)
     else:
         if not ss.is_runnig():
             subprocess.Popen(Information().get_path())
         await rpc_connect()
 
 async def main():
+    print('Welcome to RPC! For exit press [CTRL+C] or close manually!')
     await rpc_and_gmod()
-
 
 if __name__ == "__main__":
     asyncio.run(main())
