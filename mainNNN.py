@@ -24,6 +24,19 @@ class Information:
                 name = data['data']['attributes']['displayName']
                 realname = data['data']['attributes']['username']
                 return avatar, name, realname
+    
+    privet = '''
+ ██▀███   ██▓███   ▄████▄  
+▓██ ▒ ██▒▓██░  ██▒▒██▀ ▀█  
+▓██ ░▄█ ▒▓██░ ██▓▒▒▓█    ▄ 
+▒██▀▀█▄  ▒██▄█▓▒ ▒▒▓▓▄ ▄██▒
+░██▓ ▒██▒▒██▒ ░  ░▒ ▓███▀ ░
+░ ▒▓ ░▒▓░▒▓▒░ ░  ░░ ░▒ ▒  ░
+  ░▒ ░ ▒░░▒ ░       ░  ▒   
+  ░░   ░ ░░       ░        
+   ░              ░ ░      
+                  ░        
+'''
 
     def get_version(self):
         url = "https://pastebin.com/raw/HiMCYGR9"
@@ -173,7 +186,9 @@ async def rpc_and_gmod():
         await rpc_connect()
 
 async def main():
+    print(f'{Information().privet}')
     print('Welcome to RPC! For exit press [CTRL+C] or close manually!')
+    print('PYTHON BLYAT!')
     await rpc_and_gmod()
 
 if __name__ == "__main__":
