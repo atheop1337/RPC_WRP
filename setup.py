@@ -2,7 +2,7 @@ import subprocess, os, json
 
 class generate_settings:
     def setup(self):
-        subprocess.run(["pip", "install", "discord-rpc", "aiohttp", "Pymem", "python-a2s"])
+        subprocess.run(["pip", "install", "discord-rpc", "aiohttp", "Pymem", "python-a2s", "plyer", "pystray"])
 
     def read_user_id_from_config(self):
         config_path = 'C:/RPC/settings.json'

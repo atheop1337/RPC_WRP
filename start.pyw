@@ -2,7 +2,9 @@ import os
 import subprocess
 import pystray
 from PIL import Image
-import threading
+import threading, psutil
+from mainNNN import ServerStatus
+from plyer import notification
 
 class ScriptTrayIcon:
     def __init__(self, icon_path, script_path):
@@ -17,11 +19,28 @@ class ScriptTrayIcon:
         command = ["pythonw", self.script_path]
         self.process = subprocess.Popen(command, creationflags=subprocess.CREATE_NO_WINDOW)
 
-    def stop_script(self, icon, item):
+    def show_notification(self, title, message):
+        notification.notify(
+            title=title,
+            message=message,
+            app_name='RPC',
+            app_icon=icon_path,
+            timeout=3
+    )
+
+    def stop_script(self, icon, item):     
         if self.process:
             self.process.terminate()
         icon.stop()
-
+        try:
+            pid = ServerStatus().is_runnig()
+            process = psutil.Process(pid)
+            process.kill() 
+            self.show_notification("Closed", "RPC and GMOD was closed succesfully.\nStar boy ты мой герой")
+            return True
+        except psutil.NoSuchProcess:
+            return False
+        
     def setup_tray_icon(self):
         icon = pystray.Icon("RPC")
         icon.icon = self.load_icon()

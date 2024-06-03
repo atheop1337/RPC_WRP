@@ -57,7 +57,7 @@ class Information:
         return user_id
 
     def get_path(self):
-        return QueryValueEx(OpenKeyEx(HKEY_LOCAL_MACHINE,r"SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\Steam App 4000"),'InstallLocation')[0]+'\\hl2.exe'
+        return QueryValueEx(OpenKeyEx(HKEY_LOCAL_MACHINE,r"SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\Steam App 4000"),'InstallLocation')[0]+'\\hl2.exe' # C:\\Program Files (x86)\\Steam\\steamapps\\common\\GarrysMod\\hl2.exe
 
 class Mr_Freeman:
 
@@ -89,7 +89,7 @@ class ServerStatus:
             except:
                 continue
         return False
-
+    
 
     def getStatus(self):
         pid=self.is_runnig()
@@ -139,6 +139,7 @@ def signal_handler(sig, frame):
     exit(0)
 
 async def rpc_connect():
+    user_id = Information().read_id()
     rpc = pypresence.AioPresence(1237037992368148490)
     await rpc.connect()
     info = Information()
@@ -147,14 +148,14 @@ async def rpc_connect():
     avatar, name, realname = await info.get_data()
     button = [{"label": "Github", "url": r"https://github.com/v1lmok/RPC_WRP"},{"label": "Forum", "url": f"https://forum.wayzer.ru/u/{realname}"}]
     while True:
-        status = ss.getStatus()
+        status = ss.getStatus() 
         server_name = ss.getServer()
         if not status:
             img='wrp'
         else:
             img=status[1]
             status=status[0]
-        await rpc.update(state=f'My nickname on forum is {name}',
+        await rpc.update(state=f'My nickname on forum - {name}',
             details=status,
             buttons=button,
             large_image=img,
@@ -177,8 +178,6 @@ async def rpc_and_gmod():
             await rpc_connect()
     elif version == 404:
         print('Cannot fetch information about latest version..\nAborting...')
-        time.sleep(0.8)
-        webbrowser.open('https://youtu.be/aR1-kXgDCdA')
         quit(0)
     else:
         if not ss.is_runnig():
