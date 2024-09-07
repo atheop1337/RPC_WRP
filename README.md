@@ -20,7 +20,7 @@
    ```
    python start.pyw
    ```
-skibidi
+rizzler
 
 ## Пример
 
