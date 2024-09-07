@@ -20,7 +20,8 @@
    ```
    python start.pyw
    ```
-rizzler
+
+op
 
 ## Пример
 
