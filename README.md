@@ -20,7 +20,7 @@
    ```
    python start.pyw
    ```
-never
+skibidi
 
 ## Пример
 
