@@ -20,8 +20,7 @@
    ```
    python start.pyw
    ```
-rizzler
-
+only
 ## Пример
 
 ![Example](Images/Example.png)
