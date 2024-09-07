@@ -20,7 +20,7 @@
    ```
    python start.pyw
    ```
-sigma
+never
 
 ## Пример
 
